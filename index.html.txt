@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced To-Do List</title>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+        li.completed {
+            text-decoration: line-through;
+            color: #ccc;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin-left: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>My To-Do List</h1>
+    <input type="text" id="taskInput" placeholder="Add a new task...">
+    <button class="btn" onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+    // JavaScript code
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load tasks from local storage
+        loadTasks();
+    });
+
+    function addTask() {
+        var taskInput = document.getElementById("taskInput");
+        var taskList = document.getElementById("taskList");
+        var task = taskInput.value.trim();
+        
+        if (task !== "") {
+            var li = document.createElement("li");
+            li.innerHTML = `
+                <input type="checkbox" onchange="toggleTask(this)">
+                <span>${task}</span>
+                <button class="btn" onclick="editTask(this)">Edit</button>
+                <button class="btn" onclick="deleteTask(this)">Delete</button>
+            `;
+            taskList.appendChild(li);
+            taskInput.value = "";
+
+            // Save tasks to local storage
+            saveTasks();
+        }
+    }
+
+    function toggleTask(checkbox) {
+        var taskItem = checkbox.parentElement;
+        taskItem.classList.toggle('completed');
+
+        // Save tasks to local storage
+        saveTasks();
+    }
+
+    function editTask(button) {
+        var taskItem = button.parentElement;
+        var span = taskItem.querySelector('span');
+        var newTask = prompt("Edit task:", span.textContent.trim());
+        if (newTask !== null && newTask.trim() !== "") {
+            span.textContent = newTask.trim();
+
+            // Save tasks to local storage
+            saveTasks();
+        }
+    }
+
+    function deleteTask(button) {
+        var taskItem = button.parentElement;
+        taskItem.remove();
+
+        // Save tasks to local storage
+        saveTasks();
+    }
+
+    function saveTasks() {
+        var taskList = document.getElementById("taskList");
+        localStorage.setItem("tasks", taskList.innerHTML);
+    }
+
+    function loadTasks() {
+        var taskList = document.getElementById("taskList");
+        taskList.innerHTML = localStorage.getItem("tasks") || "";
+    }
+</script>
+
+</body>
+</html>
